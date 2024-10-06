@@ -125,3 +125,23 @@ class Component:
         Render the component. Should be overridden by subclasses.
         """
         raise NotImplementedError("Subclasses should implement this method")
+
+
+class Checkbox(Component):
+    def __init__(self, label, checked, key, on_change):
+        super().__init__()
+        self.label = label
+        self.checked = checked
+        self.key = key
+        self.on_change = on_change
+
+    def render(self):
+        return VNode(
+            type="checkbox",
+            key=self.key,
+            props={
+                "label": self.label,
+                "value": self.checked,
+                "on_change": self.on_change
+            }
+        )

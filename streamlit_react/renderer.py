@@ -1,5 +1,6 @@
 import streamlit as st
 
+from streamlit_react.components import Container
 from streamlit_react.core import VNode
 
 
@@ -8,6 +9,9 @@ def render_vdom(vnode, depth=0):
     Recursively renders the virtual DOM nodes using Streamlit functions.
     Includes logging to help identify non-VNode objects and their keys.
     """
+    if isinstance(vnode, Container):
+        container_vnode = vnode.render()
+        vnode = container_vnode
     if not isinstance(vnode, VNode):
         node_key = getattr(vnode, "key", "No key attribute found")
         print(f"{' ' * depth * 2}Error: Expected a VNode, but got {type(vnode).__name__}.")
@@ -35,6 +39,9 @@ def render_vdom(vnode, depth=0):
         on_change = vnode.props.get("on_change", None)
 
         st.text_input(label=label, value=value, key=key, on_change=on_change)
+    elif vnode.type == "checkbox":
+        st.checkbox(label=vnode.props["label"], value=vnode.props.get("value", False), key=vnode.key,
+                    on_change=vnode.props.get("on_change", None))
     else:
         print(f"{' ' * depth * 2}Unknown VNode type: {vnode.type}, Key: {vnode.key}")
         raise TypeError(f"Unknown VNode type: {vnode.type}, Key: {vnode.key}")
